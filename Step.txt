@@ -1,0 +1,6 @@
+1. git status
+2. git remote -v
+3. git add .
+4. git commit -m ""
+5. If your branch is main: git push -u origin main (2nd time no -u)
+5. If your branch is master: git push -u origin master (2nd time no -u)
