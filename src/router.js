@@ -1,0 +1,32 @@
+import SignIn from './views/component/auth/SignIn.vue';
+import SignUp from './views/component/auth/SignUp.vue';
+import Dashboard from './views/component/page/Dashboard.vue';
+
+
+import { createRouter, createWebHistory } from 'vue-router';
+const routes = [
+    {
+        path: '/',
+        name: 'SignIn',
+        component: SignIn,
+    },
+    {
+        path: '/signup',
+        name: 'SignUp',
+        component: SignUp,
+    },
+    {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
+    },
+    ///:pathMatch(.*)* every /thing else will redirect to SignIn
+    { path: '/:pathMatch(.*)*', redirect: { name: 'SignIn' } },
+];
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes: routes,
+});
+
+export default router;
