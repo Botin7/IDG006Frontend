@@ -6,6 +6,10 @@
     Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
     documentation
   </p>
+
+  <div>
+    <p>This is a simple paragraph inside the div.</p>
+  </div>
 </template>
 
 <style scoped></style>
