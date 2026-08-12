@@ -1,8 +1,6 @@
 import SignIn from './views/component/auth/SignIn.vue';
 import SignUp from './views/component/auth/SignUp.vue';
 import Dashboard from './views/component/page/Dashboard.vue';
-
-
 import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
     {

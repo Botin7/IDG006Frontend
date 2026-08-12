@@ -1,19 +1,29 @@
 <template>
-    <h1>Dashboard</h1>
-    <RouterLink to="/signup">Go to Sign Up</RouterLink>
-    <br>
-    <br>
-    <br>
-    <router-link :to="{ name: 'SignIn' }">Go to Sign In</router-link>
-    <br>
-    <br>
-    <br>
-    <button @click="goBack">Go Back</button>
-    <button @click="goForward">Go Forward</button>
+    <Navbar />
+    <Sidebar/>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark" style="display: none;">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <Content />
+  <!-- /.control-sidebar -->
+   <Footer />
+
+
+<div id="sidebar-overlay"></div><div></div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import Navbar from '../include/navbar.vue';
+import Sidebar from '../include/sidebar.vue';
+import Footer from '../include/footer.vue';
+import Content from '../include/content.vue';
 const router = useRouter()
 
 function goBack() {

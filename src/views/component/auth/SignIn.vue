@@ -1,23 +1,109 @@
 <template>
-    <h1>Sign In</h1>
-    <button @click="goToDashboard">Go to Dashboard</button>
-    <br>
-    <br>
-    <br>
-    <button @click="goToSignUp">Go to Sign Up</button>
+    <div class="login-page">
+        <div class="login-box">
+            <div class="card card-outline card-primary">
+                <div class="card-header text-center">
+                    <RouterLink to="/" class="h1"><b>Admin</b>LTE</RouterLink>
+                </div>
+                <div class="card-body">
+                    <p class="login-box-msg">Sign in to start your session</p>
+                    <form @submit.prevent="signIn">
+                        <div class="input-group mb-3">
+                            <input type="email" v-model="user.email" class="form-control" placeholder="Email"
+                                :class="userError.email ? 'is-invalid' : ''" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
+                         <div class="invalid-feedback">
+                                {{ userError.email }}
+                            </div> 
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" v-model="user.password" class="form-control" placeholder="Password"
+                                autocomplete :class="userError.password ? 'is-invalid' : ''"/>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">
+                                {{ userError.password }}
+                            </div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-8"></div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="mb-0">
+                        <RouterLink :to="{ name: 'SignUp' }" class="text-center">Register a new
+                            membership</RouterLink>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter } from "vue-router";
+import { reactive } from "vue";
+import { LoadingModal, MessageModal, ConfirmModal, CloseModal } from "@/function/swal";
 
-// replace to a path
-function goToDashboard() {
-    router.replace('/dashboard')
+const router = useRouter();
+
+const user = reactive({
+    email: "",
+    password: "",
+});
+
+const userError = reactive({
+    email: "",
+    password: "",
+});
+
+
+const defaultUser = JSON.parse(JSON.stringify(user));
+const defaultUserError = JSON.parse(JSON.stringify(userError));
+
+function resetAllState() {
+    Object.assign(user, defaultUser);
+    Object.assign(userError, defaultUserError);
 }
 
-// replace to a named route
-function goToSignUp() {
-    router.replace({ name: 'SignUp' })
+async function signIn() {
+    try {
+        LoadingModal('Signing In...');
+
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+
+        CloseModal();
+        const confirmation = await ConfirmModal({
+            title: 'Confirm Sign In',
+            text: 'Do you want to continue to the Dashboard?',
+            icon: 'question',
+        });
+
+        if (!confirmation.isConfirmed) {
+            return MessageModal({
+                icon: 'info',
+                title: 'Cancelled',
+                text: 'Sign in was cancelled.',
+            });
+        }
+
+        resetAllState();
+        router.replace({ name: 'Dashboard' });
+    } catch (error) {
+        const { response } = error;
+        if (!response) {
+            return MessageModal({ icon: "error", title: "Error", text: error.message });
+        }
+        //!!! Handle validation errors from the server
+    }
 }
 </script>
