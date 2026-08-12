@@ -24,7 +24,10 @@ import Navbar from '../include/navbar.vue';
 import Sidebar from '../include/sidebar.vue';
 import Footer from '../include/footer.vue';
 import Content from '../include/content.vue';
+import { useUserStore } from "@/stores/users";
 const router = useRouter()
+
+
 
 function goBack() {
     // router.back(); // option 1
@@ -34,6 +37,13 @@ function goBack() {
 function goForward() {
     // router.forward(); // option 1
     router.go(1); // option 2
+}
+
+const userStore = useUserStore();
+
+if (userStore.isAuthenticated) {
+  // user is logged in
+  console.log('User is logged in');
 }
 
 </script>

@@ -71,7 +71,12 @@
 </template>
 
 <script setup>
+import { LoadingModal, MessageModal, CloseModal } from "@/function/swal";
 import { reactive } from "vue";
+import {apiSignUp} from "@/function/api/auth";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const user = reactive({
     name: "",
@@ -86,7 +91,44 @@ const userError = reactive({
     password: "",
 });
 
+const defaultUser = JSON.parse(JSON.stringify(user));
+const defaultUserError = JSON.parse(JSON.stringify(userError));
+
+function resetAllState() {
+    Object.assign(user, defaultUser);
+    Object.assign(userError, defaultUserError);
+}
+
 async function signUp() {
-    console.log("signUp");
+    try {
+        LoadingModal('Signing Up...');
+        const response = await apiSignUp(user);
+        const { data } = response;
+
+        resetAllState();
+        return MessageModal({
+            icon: "success",
+            title: "Success",
+            text: data.message,
+        },
+            () => {
+                router.replace({ name: "SignIn" });
+            });
+    } catch (error) {
+        const { response } = error;
+        if (!response) {
+            return MessageModal({ icon: "error", title: "Error", text: error.message });
+        }
+        const { status, data } = response;
+        if (status === 422) {
+            Object.keys(userError).forEach((key) => {
+                userError[key] = data.errors[key]
+                    ? data.errors[key][0]
+                    : "";
+            });
+            return CloseModal();
+        }
+        return MessageModal({ icon: "error", title: "Error", text: data.message });
+    }
 }
 </script>

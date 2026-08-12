@@ -52,9 +52,11 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { reactive } from "vue";
-import { LoadingModal, MessageModal, ConfirmModal, CloseModal } from "@/function/swal";
-
+import { LoadingModal, MessageModal, CloseModal } from "@/function/swal";
+import { apiSignIn } from "@/function/api/auth";
+import { useUserStore } from "@/stores/users";
 const router = useRouter();
+const userStore = useUserStore();
 
 const user = reactive({
     email: "",
@@ -78,32 +80,33 @@ function resetAllState() {
 async function signIn() {
     try {
         LoadingModal('Signing In...');
+        const response = await apiSignIn(user);
+        const { data } = response;
+        const userStore = useUserStore();
+        
+        // Uncomment the following lines if you have a user store set up
+         userStore.setState(data.user);
+         userStore.setSanctumToken(data.token);
+        console.log(data.user);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
-
-        CloseModal();
-        const confirmation = await ConfirmModal({
-            title: 'Confirm Sign In',
-            text: 'Do you want to continue to the Dashboard?',
-            icon: 'question',
-        });
-
-        if (!confirmation.isConfirmed) {
-            return MessageModal({
-                icon: 'info',
-                title: 'Cancelled',
-                text: 'Sign in was cancelled.',
-            });
-        }
-
-        resetAllState();
-        router.replace({ name: 'Dashboard' });
+        resetAllState(); 
+        router.replace({ name: "Dashboard" }); 
+        return CloseModal();
     } catch (error) {
         const { response } = error;
         if (!response) {
             return MessageModal({ icon: "error", title: "Error", text: error.message });
         }
-        //!!! Handle validation errors from the server
+        const { status, data } = response;
+        if (status === 422) {
+            Object.keys(userError).forEach((key) => {
+                userError[key] = data.errors[key]
+                    ? data.errors[key][0]
+                    : "";
+            });
+            return CloseModal();
+        }
+        return MessageModal({ icon: "error", title: "Error", text: data.message });
     }
 }
 </script>
