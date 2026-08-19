@@ -2,6 +2,7 @@ import SignIn from './views/component/auth/SignIn.vue';
 import SignUp from './views/component/auth/SignUp.vue';
 import Dashboard from './views/component/page/Dashboard.vue';
 import SignOut from './views/component/auth/Signout.vue';
+import Profile from './views/component/auth/profile.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
     {
@@ -20,6 +21,12 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard,
+        meta:{guarded: true}
+    },
+     {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile, 
         meta:{guarded: true}
     },
     {
