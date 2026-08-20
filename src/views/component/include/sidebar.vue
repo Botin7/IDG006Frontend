@@ -30,6 +30,17 @@
                         </RouterLink>
                     </li>
                 </ul>
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <li class="nav-item">
+                        <RouterLink :to="{ name: 'Test' }" active-class="active" class="nav-link">
+                          <i class='nav-icon fas fa-pen-alt'></i>
+                            <p>
+                                Test
+                            </p>
+                        </RouterLink>
+                    </li>
+                </ul>
             </nav>
             <!-- /.sidebar-menu -->
         </div>
