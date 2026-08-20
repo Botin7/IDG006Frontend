@@ -99,7 +99,7 @@
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import { ref, reactive, onMounted } from 'vue';
-import { apiGetTestsWithDetails } from '@/function/api/test';
+import { apiGetTestsWithDetails,apiCreateTest,apiReadTest,apiDeleteTest } from '@/function/api/test';
 import { CloseModal, LoadingModal, MessageModal } from "@/function/swal";
 
 const tests = ref([]);
@@ -142,10 +142,45 @@ async function generateTests() {
   tests.value = response.data.tests;
 }
 async function saveTest() {
-  hideModal();
+  try {
+    LoadingModal();
+    let response = null;
+    if (testObj.id === null) {
+      response = await apiCreateTest(testObj);
+      onTestCreated(response.data.test);
+    } else {
+      response = await apiUpdateTest(testObj);
+      onTestUpdated(response.data.test);
+    }
+    hideModal();
+    return MessageModal({ icon: 'success', title: 'Success', text: response.data.message });
+  } catch (error) {
+    const { response } = error;
+    if (!response) {
+      return MessageModal({ icon: "error", title: "Error", text: error.message });
+    }
+    const { status, data } = response;
+    if (status === 422) {
+      Object.keys(testErrObj).forEach((key) => {
+        testErrObj[key] = data.errors[key]
+          ? data.errors[key][0]
+          : "";
+      });
+      return CloseModal();
+    }
+    return MessageModal({ icon: "error", title: "Error", text: data.message });
+  }
 }
 async function viewTest(id) {
-  showModal();
+  try {
+    LoadingModal();
+    const response = await apiReadTest(id);
+    Object.assign(testObj, response.data.test);
+    showModal();
+    return CloseModal();
+  } catch (error) {
+    return MessageModal({ icon: "error", title: "Error", text: error.response?.data?.message || error.message });
+  }
 }
 async function removeTest(id) {
   Swal.fire({
@@ -157,7 +192,14 @@ async function removeTest(id) {
     confirmButtonText: 'Yes, Delete it.'
   }).then(async (sw) => {
     if (sw.isConfirmed) {
-
+      try {
+        LoadingModal();
+        const response = await apiDeleteTest(id);
+        onTestDeleted(response.data.test);
+        return MessageModal({ icon: 'success', title: 'Success', text: response.data.message });
+      } catch (error) {
+        return MessageModal({ icon: "error", title: "Error", text: error.response?.data?.message || error.message });
+      }
     }
   });
 }
@@ -168,4 +210,20 @@ function hideModal() {
 function showModal() {
   $('#TEST-MODAL').modal('show');
 }
+
+const onTestCreated = (test) => {
+  tests.value = [...tests.value, test];
+  /* test is udpate to end| [test,...tests.value ] to add new on top*/
+};
+const onTestUpdated = (test) => {
+  tests.value = tests.value.map(obj => obj.id !== test.id ? obj : test);
+  /* if obj.id is NOT equal to test.id
+    keep the old obj
+else
+    replace it with the updated test */
+};
+const onTestDeleted = (test) => {
+  tests.value = tests.value.filter(obj => obj.id !== test.id);
+  /* Keep every test whose id is different from the deleted test's id. ex.[1, 2, 3, 4].filter(x => x !== 2)=[1, 3, 4] */
+};
 </script>
