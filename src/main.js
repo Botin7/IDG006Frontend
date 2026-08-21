@@ -1,6 +1,17 @@
 import 'admin-lte/plugins/jquery/jquery.min.js'
 import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js'
 import 'admin-lte/dist/js/adminlte.min.js'
+import { createI18n } from 'vue-i18n'
+import en from '../src/locale/en.json'
+import kh from '../src/locale/kh.json'
+const i18n = createI18n({
+  locale: localStorage.getItem('language'),
+  fallbackLocale: 'en',
+  messages: {
+    en: en,
+    kh: kh
+  }
+})
 
 
 import axios from 'axios'
@@ -11,8 +22,9 @@ import { createPinia } from 'pinia'
 import { useUserStore } from "@/stores/users";
 import { apiVerify } from "@/function/api/auth.js";
 
+
 const pinia = createPinia()
-createApp(App).use(router).use(pinia).mount('#app')
+createApp(App).use(router).use(i18n).use(pinia).mount('#app')
 
 const userStore = useUserStore();
 axios.interceptors.request.use((config) => {

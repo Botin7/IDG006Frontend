@@ -1,0 +1,9 @@
+{
+    "message":{
+        "hello":"Hello"
+    },
+    "sidebar":{
+        "dashboard_page":"Dashboard",
+        "test_page": "Test Page"
+    }
+}

@@ -25,7 +25,7 @@
                         <RouterLink :to="{ name: 'Dashboard' }" active-class="active" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                Dashboard
+                                {{ $t('sidebar.dashboard_page') }}
                             </p>
                         </RouterLink>
                     </li>
@@ -36,7 +36,7 @@
                         <RouterLink :to="{ name: 'Test' }" active-class="active" class="nav-link">
                           <i class='nav-icon fas fa-pen-alt'></i>
                             <p>
-                                Test
+                                {{ $t('sidebar.test_page') }}
                             </p>
                         </RouterLink>
                     </li>
